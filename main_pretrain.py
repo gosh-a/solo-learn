@@ -78,24 +78,24 @@ def main(cfg: DictConfig):
         model = model.to(memory_format=torch.channels_last)
 
     # validation dataloader for when it is available
-    if cfg.data.dataset == "custom" and (cfg.data.no_labels or cfg.data.val_path is None):
-        val_loader = None
-    elif cfg.data.dataset in ["imagenet100", "imagenet"] and cfg.data.val_path is None:
-        val_loader = None
-    else:
-        if cfg.data.format == "dali":
-            val_data_format = "image_folder"
-        else:
-            val_data_format = cfg.data.format
-
-        _, val_loader = prepare_data_classification(
-            cfg.data.dataset,
-            train_data_path=cfg.data.train_path,
-            val_data_path=cfg.data.val_path,
-            data_format=val_data_format,
-            batch_size=cfg.optimizer.batch_size,
-            num_workers=cfg.data.num_workers,
-        )
+    # if cfg.data.dataset == "custom" and (cfg.data.no_labels or cfg.data.val_path is None):
+    #     val_loader = None
+    # elif cfg.data.dataset in ["imagenet100", "imagenet"] and cfg.data.val_path is None:
+    #     val_loader = None
+    # else:
+    #     if cfg.data.format == "dali":
+    #         val_data_format = "image_folder"
+    #     else:
+    #         val_data_format = cfg.data.format
+    #
+    #     _, val_loader = prepare_data_classification(
+    #         cfg.data.dataset,
+    #         train_data_path=cfg.data.train_path,
+    #         val_data_path=cfg.data.val_path,
+    #         data_format=val_data_format,
+    #         batch_size=cfg.optimizer.batch_size,
+    #         num_workers=cfg.data.num_workers,
+    #     )
 
     # pretrain dataloader
     if cfg.data.format == "dali":
@@ -127,7 +127,7 @@ def main(cfg: DictConfig):
             dali_device=cfg.dali.device,
             encode_indexes_into_labels=cfg.dali.encode_indexes_into_labels,
         )
-        dali_datamodule.val_dataloader = lambda: val_loader
+        # dali_datamodule.val_dataloader = lambda: val_loader
     else:
         pipelines = []
         for aug_cfg in cfg.augmentations:
@@ -231,7 +231,7 @@ def main(cfg: DictConfig):
     if cfg.data.format == "dali":
         trainer.fit(model, ckpt_path=ckpt_path, datamodule=dali_datamodule)
     else:
-        trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+        trainer.fit(model, train_loader, ckpt_path=ckpt_path)
 
 
 if __name__ == "__main__":

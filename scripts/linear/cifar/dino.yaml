@@ -17,8 +17,8 @@ backbone:
 pretrain_method: "dino"
 data:
   dataset: cifar10
-  train_path: "./datasets"
-  val_path: "./datasets"
+  train_path: "/content/datasets/cifar10/train"
+  val_path: "/content/datasets/cifar10/val"
   format: "image_folder"
   num_workers: 4
 optimizer:
